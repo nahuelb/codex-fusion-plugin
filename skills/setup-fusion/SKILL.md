@@ -8,9 +8,12 @@ description: Initialize or inspect Fusion's live model settings when the user as
 Resolve the installed plugin root as two directories above this skill directory.
 Use that absolute root for helper commands; do not assume the user's working directory contains the plugin source.
 
+When upgrading from the old `~/.config/codex-fusion/models.json` location, preserve the existing choices using [the migration steps](../../docs/installation.md#existing-settings) before initialization.
+
 Run `python3 <plugin-root>/scripts/model_config.py init`.
 This initializes a missing registry from shipped defaults and validates an existing registry without overwriting it.
-Honor `FUSION_MODELS_FILE` when set. Otherwise the registry is `~/.config/codex-fusion/models.json`.
+Honor `FUSION_MODELS_FILE` when set. Otherwise the registry is `$CODEX_HOME/plugins/fusion/models.json`.
+Use `~/.codex` when `CODEX_HOME` is unset or empty. This registry is outside the versioned plugin cache.
 If the registry is invalid, report the specific error. Preserve the file until the user authorizes a repair.
 If the sandbox blocks the selected directory, use the normal approval path. Do not relocate settings or change permissions to bypass it.
 If access remains blocked, provide the exact initialization command with the installed absolute helper path.

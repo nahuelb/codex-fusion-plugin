@@ -50,7 +50,8 @@ A local source reads the checkout. Reinstall after pulling reviewed changes; mar
 
 ## Models and hooks
 
-`$setup-fusion` uses `~/.config/codex-fusion/models.json`, or `FUSION_MODELS_FILE` when set on the Codex host.
+`$setup-fusion` uses `$CODEX_HOME/plugins/fusion/models.json`, or `FUSION_MODELS_FILE` when set on the Codex host.
+When `CODEX_HOME` is unset or empty, it defaults to `~/.codex`. The registry stays outside the versioned plugin cache.
 Edit that file or ask setup to change specific model fields. Existing unrelated settings are preserved.
 No cachebuster, reinstall, or new task is needed for model edits.
 The lead reads the file before each handoff. Model or effort changes replace the sidekick after its current handoff finishes.
@@ -58,6 +59,14 @@ Lead changes apply to the next delegated run.
 
 Hooks require Codex hook trust. Review the plugin hooks through `/hooks` if you want the advisory reminders.
 The core skill works without hooks. Setup does not enable hook trust automatically.
+
+## Existing settings
+
+Earlier versions used `~/.config/codex-fusion/models.json`.
+When upgrading, validate that file before setup and copy it to the new registry path only if the destination is absent.
+Preserve the original as a backup. Never overwrite an existing destination or silently replace an invalid source with defaults.
+An explicit `FUSION_MODELS_FILE` continues to select its own file; do not migrate it automatically.
+For an intentionally separate `CODEX_HOME`, initialize separate settings unless the user requests importing the old choices.
 
 ## Maintainer reloads
 

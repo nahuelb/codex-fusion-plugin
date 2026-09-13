@@ -12,7 +12,7 @@ Write research documentation in original prose with public references.
 
 ## Live model configuration
 
-The user's live registry is `~/.config/codex-fusion/models.json`, or the path selected by `FUSION_MODELS_FILE`.
+The user's live registry is `$CODEX_HOME/plugins/fusion/models.json`, or the path selected by `FUSION_MODELS_FILE`.
 Read it before every handoff. Changes must not require plugin reinstallation.
 Keep shipped defaults in `config/models.default.json`; never overwrite an existing user registry during setup or release.
 A model change takes effect at a handoff boundary. Never claim it changes an in-flight call.

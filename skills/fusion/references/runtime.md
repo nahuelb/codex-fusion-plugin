@@ -11,7 +11,7 @@ The JSON lead model is reserved for delegated entry. Do not change the current c
 Read [delegated entry](delegated-entry.md) only when a caller delegates a Fusion run or `use_current_model` is false.
 
 Before EVERY sidekick spawn or follow-up brief, run `python3 <plugin-root>/scripts/fusion.py dispatch`.
-This reads `~/.config/codex-fusion/models.json` afresh. It returns an action and exact `spawn_args`.
+This reads `$CODEX_HOME/plugins/fusion/models.json` afresh. It returns an action and exact `spawn_args`.
 Never use a model-pinned custom agent; use `agent_type: "default"` with the returned model and reasoning effort.
 The live user registry selects the model. Do not substitute a model from another workflow or copy a remembered default.
 If the file is missing, direct the user to `$setup-fusion` before dispatching.

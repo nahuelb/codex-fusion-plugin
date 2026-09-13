@@ -11,7 +11,8 @@ EFFORTS = {'none', 'minimal', 'low', 'medium', 'high', 'xhigh', 'max', 'ultra'}
 
 
 def live_path():
-    return Path(os.environ.get('FUSION_MODELS_FILE', str(Path.home() / '.config/codex-fusion/models.json'))).expanduser()
+    codex_home = Path(os.environ.get('CODEX_HOME') or Path.home() / '.codex').expanduser()
+    return Path(os.environ.get('FUSION_MODELS_FILE', str(codex_home / 'plugins/fusion/models.json'))).expanduser()
 
 
 def validate(data):

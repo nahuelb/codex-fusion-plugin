@@ -58,7 +58,8 @@ See [installation](docs/installation.md) for prerequisites, updates, local check
 
 ## Model settings
 
-Edit `~/.config/codex-fusion/models.json` at any time:
+Edit `$CODEX_HOME/plugins/fusion/models.json` at any time.
+When `CODEX_HOME` is unset, the path is `~/.codex/plugins/fusion/models.json`:
 
 ```json
 {

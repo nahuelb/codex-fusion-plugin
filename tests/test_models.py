@@ -92,5 +92,31 @@ class ModelTests(unittest.TestCase):
             self.call('dispatch')
 
 
+class RegistryPathTests(unittest.TestCase):
+    def test_default_and_empty_codex_home(self):
+        with tempfile.TemporaryDirectory() as directory, patch.dict(os.environ, {}, clear=True), patch.object(Path, 'home', return_value=Path(directory)):
+            expected = Path(directory) / '.codex/plugins/fusion/models.json'
+            self.assertEqual(model_config.live_path(), expected)
+            os.environ['CODEX_HOME'] = ''
+            self.assertEqual(model_config.live_path(), expected)
+
+    def test_custom_codex_home_initializes_and_preserves_registry(self):
+        with tempfile.TemporaryDirectory() as directory, patch.dict(os.environ, {'CODEX_HOME': directory}, clear=True):
+            expected = Path(directory) / 'plugins/fusion/models.json'
+            loaded = model_config.initialize()
+            self.assertEqual(Path(loaded['path']), expected.resolve())
+            data = loaded['models']
+            data['sidekick']['model'] = 'custom/model'
+            expected.write_text(json.dumps(data))
+            model_config.initialize()
+            self.assertEqual(model_config.resolve('sidekick')['spawn_args']['model'], 'custom/model')
+
+    def test_explicit_file_wins_over_codex_home(self):
+        with tempfile.TemporaryDirectory() as directory, patch.dict(os.environ, {'CODEX_HOME': directory, 'FUSION_MODELS_FILE': str(Path(directory) / 'chosen.json')}, clear=True):
+            loaded = model_config.initialize()
+            self.assertEqual(Path(loaded['path']), (Path(directory) / 'chosen.json').resolve())
+            self.assertFalse((Path(directory) / 'plugins/fusion/models.json').exists())
+
+
 if __name__ == '__main__':
     unittest.main()
