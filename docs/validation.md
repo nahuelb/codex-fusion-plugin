@@ -4,7 +4,7 @@ Date: 2026-09-13.
 
 ## Offline
 
-Seventeen unit tests pass. They cover session isolation, registration conflicts, matching release,
+Twenty-eight unit tests pass. They cover session isolation, registration conflicts, matching release,
 activation requirements, bounded reminders, unrelated roles, cumulative token accounting,
 missing counters, duplicate rollouts, and decreasing counters.
 The official plugin validator and skill validator pass.
@@ -60,3 +60,15 @@ Final state was inactive with no registered agent. Both agents were closed.
 Evidence is in `/tmp/fusion-dynamic-smoke/events.jsonl` and `/tmp/fusion-dynamic-smoke/result.txt`.
 The test's scratch settings are separate from shipped defaults and the user's live registry.
 The final shipped sidekick default is Luna/xhigh. No user-specific model selection is stored in this repository.
+
+
+## Fidelity revision and live use
+
+The lead authored the instruction changes and a sidekick applied the exact patch without writing new prompt policy.
+The first spawn attempt rejected the configured local model identifier. After an explicitly authorized local correction, the native spawn succeeded.
+This exposed a setup limitation: schema-valid model names are not proof of runtime availability. No local model identifiers are included here.
+The lead reviewed the full diff before reusing the same sidekick for a second validation handoff.
+The review also found an ambiguous plugin-root instruction and a bookkeeping-failure fallback that still demanded dispatch. Both instructions were corrected.
+
+Full-session context persistence remains runtime-dependent. A continuation summary after cleanup preserves selected facts, not the original conversation or its cache.
+A live implementation handoff does not prove adherence to every revised instruction, automatic hook delivery, or model-pair performance.

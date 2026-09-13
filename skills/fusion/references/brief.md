@@ -17,6 +17,8 @@ Verify:
 <verbatim command>
 Pass: <observable result>
 Constraints: <scope, permission boundary, main-agent-owned processes>
+Continuity: <accepted facts and checks after runtime-required replacement; omit repeated context for the same agent>
+Visual evidence: <required rendered states and screenshot paths, when applicable>
 Report: changed paths, checks and results, evidence, blockers.
 ```
 

@@ -10,7 +10,7 @@ With `lead.use_current_model: true`, the result is `inherit`: the current agent 
 The JSON lead model is reserved for delegated entry. Do not change the current conversation's model.
 Read [delegated entry](delegated-entry.md) only when a caller delegates a Fusion run or `use_current_model` is false.
 
-Before EVERY sidekick spawn or follow-up brief, run `python3 <plugin-root>/scripts/fusion.py dispatch`.
+With working bookkeeping, before EVERY sidekick spawn or follow-up brief, run `python3 <plugin-root>/scripts/fusion.py dispatch`. If activation failed, use the main skill's explicit fallback instead.
 This reads `$CODEX_HOME/plugins/fusion/models.json` afresh. It returns an action and exact `spawn_args`.
 Never use a model-pinned custom agent; use `agent_type: "default"` with the returned model and reasoning effort.
 The live user registry selects the model. Do not substitute a model from another workflow or copy a remembered default.
@@ -28,7 +28,7 @@ Handle the dispatch result:
 
 A model or reasoning change replaces the sidekick at a handoff boundary. It cannot modify an already running model call.
 A lead-only change does not replace the sidekick. Formatting-only edits do not replace it either.
-Register the actual spawn settings, even if the file changes while the spawn is in progress:
+When bookkeeping is available, register the actual spawn settings, even if the file changes while the spawn is in progress:
 `python3 <plugin-root>/scripts/fusion.py register --agent <id> --model <spawned-model> --reasoning-effort <spawned-effort>`.
 Do not register desired settings as evidence of served settings. Inspect runtime metadata when that distinction matters.
 
@@ -40,7 +40,7 @@ Inspect available tool schemas before calling them. Names can differ between Cod
 | --- | --- | --- |
 | First brief | `spawn_agent` | returned `spawn_args`, plus `message` containing contract and brief |
 | Next brief | `send_input` | `target`, `message` |
-| Steer running work | `send_input` | `target`, `message`, `interrupt: true` |
+| Steer running work | `send_input` | `target`, `message`; use `interrupt: true` when the change must apply immediately |
 | Collect result | `wait_agent` | `targets`, supported `timeout_ms` |
 | Close completed thread | `close_agent` | Use the live schema's ID field |
 
@@ -51,6 +51,12 @@ If an agent has lost context, replace it with a compact accepted-state summary a
 Use bounded waits that permit user updates. Do not repeatedly poll empty state.
 If native subagent tools are unavailable, report that Fusion cannot delegate here and complete authorized work directly.
 Do not create user-visible Codex tasks as substitute subagents.
+
+## User updates during a handoff
+
+Before resuming a wait, assess every new user message against the running brief. Handle lead-only requests now. Forward relevant changes, answers, or constraints to the sidekick; interrupt for immediate redirection, and queue only when finishing the current brief remains appropriate.
+Tell the sidekick to incorporate the update into retained work, not restart it. For a stop request, collect and review partial work and follow the native stop/close contract. A model-setting change still takes effect only at the handoff boundary.
+Resume waiting only after deciding that no lead action or steering remains. Deliver promised user answers when available rather than parking them behind another handoff.
 
 ## Runtime ownership
 

@@ -8,7 +8,7 @@ This plugin paraphrases the recovered behavior. It does not redistribute the ori
 
 | Recovered mechanism | Plugin implementation | Evidence boundary |
 | --- | --- | --- |
-| One persistent sidekick; briefs and results | One native agent, reused with send_input; no history fork | Binary sidekick tool description; runtime adaptation |
+| One persistent sidekick; briefs and results | Reuse a native agent while permitted; summarize before runtime-required cleanup; no history fork | Full session continuity and cache preservation are not guaranteed |
 | Lead plans, reviews, and owns authority | Fusion skill and sidekick contract | Embedded lead and sidekick guidance |
 | Exact settled code and runnable checks | Brief format | Embedded lead guidance |
 | Batch edits, verify narrowly, consolidate feedback | Both contracts | Embedded guidance |
@@ -46,6 +46,12 @@ Tool hook payloads do not provide a stable main-agent/subagent identifier.
 The plugin uses conditional edit reminders and makes no role-specific enforcement claim.
 Sidekick grounding is supplied in the spawn brief. Dynamic selection uses the default agent with explicit model arguments.
 Subagents inherit the user's sandbox configuration; the plugin does not relax it.
+
+## Instruction fidelity
+
+Lead instructions retain consequential design and correctness-critical authorship, including prompts and evaluation configuration. Sidekick briefs carry settled decisions; minor implementation details remain discretionary. User updates are assessed before waiting, and relevant changes steer the running handoff.
+The sidekick self-reviews, attempts bounded recovery, and returns evidence, including explicit visual-verification status.
+Cognition describes model-pair-specific tuning of exploration, brief detail, and pushback. This plugin uses a common conservative contract; it does not reproduce undisclosed pair-specific tuning.
 
 ## Selection decisions
 
