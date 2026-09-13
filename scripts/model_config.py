@@ -37,7 +37,7 @@ def read():
     try:
         data = validate(json.loads(path.read_text()))
     except FileNotFoundError as exc:
-        raise ValueError(f'No live model file at {path}. Run model_config.py init once.') from exc
+        raise ValueError(f'No live model file at {path}. Run $setup-fusion in Codex (or model_config.py init).') from exc
     revision = hashlib.sha256(json.dumps(data, sort_keys=True).encode()).hexdigest()[:16]
     return {'path': str(path.resolve()), 'revision': revision, 'models': data}
 

@@ -10,7 +10,7 @@ def main():
     root = Path(__file__).resolve().parents[1]
     for path in [*root.glob('scripts/*.py'), *root.glob('tests/*.py')]:
         compile(path.read_text(), str(path), 'exec')
-    for path in (root / '.codex-plugin/plugin.json', root / 'hooks/hooks.json', root / 'config/models.default.json'):
+    for path in (root / '.codex-plugin/plugin.json', root / 'hooks/hooks.json', root / 'config/models.default.json', root / '.agents/plugins/marketplace.json'):
         json.loads(path.read_text())
     import model_config
     model_config.validate(json.loads((root / 'config/models.default.json').read_text()))

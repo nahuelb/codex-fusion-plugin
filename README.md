@@ -4,16 +4,24 @@ An independent implementation of Cognition's Fusion orchestration pattern as a C
 A capable main agent plans and reviews. One persistent sidekick implements bounded briefs and verifies the results.
 This project is not affiliated with Cognition. It does not include the Devin binary or proprietary prompts.
 
-## Use
-
-Install the plugin from its personal marketplace entry. Initialize the live model file once:
+## Install and set up
 
 ```sh
-python3 scripts/model_config.py init
+codex plugin marketplace add nahuelb/codex-fusion-plugin
+codex plugin add fusion@fusion-marketplace
 ```
 
-Start a fresh Codex task and invoke `Use $fusion to implement <task>`.
-Use `fusion:fusion` when the short name is ambiguous.
+Git must have access to the repository. Start a fresh Codex task, then send:
+
+```text
+Use $setup-fusion to set up Fusion.
+```
+
+Setup creates your live model file if missing and preserves existing choices.
+Then use `Use $fusion to implement <task>`. The namespaced skills are `fusion:setup-fusion` and `fusion:fusion`.
+See [installation](docs/installation.md) for prerequisites, updates, local checkouts, and optional hooks.
+
+## Model settings
 
 Edit `~/.config/codex-fusion/models.json` at any time:
 
@@ -53,7 +61,7 @@ Ask to stop Fusion to close and release the sidekick and deactivate the current 
 
 ## Included
 
-- Explicit Fusion skill, runtime adapter, brief format, and sidekick contract.
+- Fusion workflow and setup skills, runtime adapter, brief format, and sidekick contract.
 - Opt-in session state and a single-sidekick registration constraint.
 - Advisory reminders after edits, on follow-up input, and on resume/compaction.
 - Live lead/sidekick JSON registry and explicit spawn arguments, without model-pinned custom agents.
