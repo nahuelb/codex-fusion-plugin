@@ -1,4 +1,4 @@
-# Fusion for Codex
+# Fusion
 
 An independent implementation of Cognition's Fusion orchestration pattern as a Codex plugin.
 A capable main agent plans and reviews. One persistent sidekick implements bounded briefs and verifies the results.
@@ -13,7 +13,7 @@ python3 scripts/model_config.py init
 ```
 
 Start a fresh Codex task and invoke `Use $fusion to implement <task>`.
-Use `codex-fusion-plugin:fusion` when the short name is ambiguous.
+Use `fusion:fusion` when the short name is ambiguous.
 
 Edit `~/.config/codex-fusion/models.json` at any time:
 
@@ -88,8 +88,9 @@ See [evidence and adaptations](docs/evidence.md) and [evaluation protocol](docs/
 
 ## Local development
 
-The personal marketplace uses `~/plugins/codex-fusion-plugin`, linked to this source checkout.
+The personal marketplace uses `~/plugins/fusion`, a clean export of reviewed `main`.
+Refresh that export before reinstalling plugin code; see [installation](docs/installation.md).
 Regenerate the cachebuster with the plugin-creator helper before reinstalling changed files.
-Run the plugin validator and skill validator, then `codex plugin add codex-fusion-plugin@personal`.
+Run the plugin validator and skill validator, then `codex plugin add fusion@personal`.
 Model settings remain in the external registry across reinstalls.
 New tasks load installed updates. Existing tasks do not prove that an update loaded.

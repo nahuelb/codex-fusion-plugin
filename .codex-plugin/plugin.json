@@ -1,16 +1,16 @@
 {
-  "name": "codex-fusion-plugin",
-  "version": "0.1.0+codex.20260913052109",
+  "name": "fusion",
+  "version": "0.1.0+codex.20260913052239",
   "description": "Independent Fusion-style orchestration for Codex: one persistent sidekick, precise briefs, and main-agent review.",
   "author": {
-    "name": "codex-fusion-plugin contributors"
+    "name": "Fusion contributors"
   },
   "skills": "./skills/",
   "interface": {
-    "displayName": "Fusion for Codex",
+    "displayName": "Fusion",
     "shortDescription": "One persistent sidekick. Focused main-agent review.",
     "longDescription": "A Codex adaptation of the Fusion lead/sidekick workflow, with explicit activation, advisory hooks, session bookkeeping, and local token reports.",
-    "developerName": "codex-fusion-plugin contributors",
+    "developerName": "Fusion contributors",
     "category": "Productivity",
     "capabilities": [
       "Bounded delegation",

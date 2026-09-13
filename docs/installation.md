@@ -1,14 +1,14 @@
 # Installation and local reload
 
-The personal marketplace entry uses `~/plugins/codex-fusion-plugin`.
-On the development machine, that path is a symlink to `~/Projects/codex-fusion-plugin`.
+The personal marketplace entry uses `~/plugins/fusion`.
+On the development machine, that directory is a tracked-file export of reviewed `main` from `~/Projects/codex-fusion-plugin`.
 The default personal marketplace file is `~/.agents/plugins/marketplace.json`.
 Do not add the default personal marketplace explicitly with a marketplace-add command.
 
 ## Initial setup
 
 Use the plugin-creator scaffold workflow to add the personal entry when installing on another machine.
-Point its expected local source at this checkout. Preserve any existing marketplace entries.
+Populate its local source from a clean tracked-file export of this checkout. Preserve existing marketplace entries.
 Run `python3 scripts/model_config.py init` once. This preserves an existing valid live registry.
 
 ## Reload plugin code
@@ -24,14 +24,16 @@ codex plugin list --marketplace personal --available --json
 
 Use the returned marketplace name if it differs from `personal`.
 Update the cachebuster before the reviewed commit as described in `AGENTS.md`.
+Export the reviewed commit into a fresh directory, then replace the old plugin source only after checking its ownership.
+Use `git archive HEAD` to include tracked files only. Preserve the external live model registry.
 Reinstall only when the source is correct:
 
 ```sh
-codex plugin add codex-fusion-plugin@personal
+codex plugin add fusion@personal
 ```
 
 Compare the installed files and manifest version with the reviewed source.
-Start a fresh task and invoke `codex-fusion-plugin:fusion` to verify discovery after runtime changes.
+Start a fresh task and invoke `fusion:fusion` to verify discovery after runtime changes.
 Hook execution also requires Codex hook trust; review the hooks through `/hooks` as needed.
 Do not claim live hook delivery from unit tests alone.
 
