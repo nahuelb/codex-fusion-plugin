@@ -4,6 +4,14 @@ An independent implementation of Cognition's Fusion orchestration pattern as a C
 A capable main agent plans and reviews. One persistent sidekick implements bounded briefs and verifies the results.
 This project is not affiliated with Cognition. It does not include the Devin binary or proprietary prompts.
 
+## How it works
+
+![Fusion workflow: the main agent sends exploration and implementation briefs to a persistent sidekick, reviews its results, requests fixes, and accepts the final code.](assets/fusion-workflow.png)
+
+The main agent owns planning, review, and acceptance. The sidekick explores code, implements changes, and runs focused checks.
+They exchange concise briefs and results. Review feedback goes back in one consolidated handoff.
+The main agent verifies the final changes before accepting them; critical analysis stays with the main agent.
+
 ## Install and set up
 
 ```sh
