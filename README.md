@@ -6,7 +6,34 @@ This project is not affiliated with Cognition. It does not include the Devin bin
 
 ## How it works
 
-![Fusion workflow: the main agent sends exploration and implementation briefs to a persistent sidekick, reviews its results, requests fixes, and accepts the final code.](assets/fusion-workflow.png)
+```mermaid
+flowchart TD
+    task([User task]) --> scope
+    subgraph lead[Main agent · decide and accept]
+        scope[Define scope and exploration brief]
+        plan[Use findings to write a bounded plan]
+        review{Review changes and verify results}
+        feedback[Consolidate required edits]
+        accept([Accept final code])
+    end
+    subgraph sidekick[Persistent sidekick · explore and implement]
+        explore[Find relevant code and return snippets]
+        build[Implement the brief and run focused checks]
+        fix[Apply feedback and verify fixes]
+    end
+    scope --> explore
+    explore --> plan
+    plan --> build
+    build --> review
+    review -->|Changes needed| feedback
+    feedback --> fix
+    fix --> review
+    review -->|Checks pass| accept
+    classDef decision fill:#eef2ff,stroke:#6366f1,color:#1e1b4b
+    classDef execution fill:#ecfdf5,stroke:#059669,color:#064e3b
+    class scope,plan,review,feedback,accept decision
+    class explore,build,fix execution
+```
 
 The main agent owns planning, review, and acceptance. The sidekick explores code, implements changes, and runs focused checks.
 They exchange concise briefs and results. Review feedback goes back in one consolidated handoff.
@@ -122,9 +149,13 @@ See [evidence and adaptations](docs/evidence.md) and [evaluation protocol](docs/
 
 ## Local development
 
-The personal marketplace uses `~/plugins/fusion`, a clean export of reviewed `main`.
-Refresh that export before reinstalling plugin code; see [installation](docs/installation.md).
-Regenerate the cachebuster with the plugin-creator helper before reinstalling changed files.
-Run the plugin validator and skill validator, then `codex plugin add fusion@personal`.
+Use a local checkout as your development marketplace source; see [installation](docs/installation.md).
+A personal marketplace can instead point to a separate clean export of reviewed `main`.
+That export directory is a maintainer choice, not a required installation path.
+Update the cachebuster and reinstall from your configured marketplace after plugin changes.
 Model settings remain in the external registry across reinstalls.
 New tasks load installed updates. Existing tasks do not prove that an update loaded.
+
+## License
+
+[MIT](LICENSE). The workflow diagram is original to this project.
