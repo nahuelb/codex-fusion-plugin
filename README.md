@@ -6,34 +6,7 @@ This project is not affiliated with Cognition. It does not include the Devin bin
 
 ## How it works
 
-```mermaid
-flowchart TD
-    task([User task]) --> scope
-    subgraph lead[Main agent · decide and accept]
-        scope[Define scope and exploration brief]
-        plan[Use findings to write a bounded plan]
-        review{Review changes and verify results}
-        feedback[Consolidate required edits]
-        accept([Accept final code])
-    end
-    subgraph sidekick[Persistent sidekick · explore and implement]
-        explore[Find relevant code and return snippets]
-        build[Implement the brief and run focused checks]
-        fix[Apply feedback and verify fixes]
-    end
-    scope --> explore
-    explore --> plan
-    plan --> build
-    build --> review
-    review -->|Changes needed| feedback
-    feedback --> fix
-    fix --> review
-    review -->|Checks pass| accept
-    classDef decision fill:#eef2ff,stroke:#6366f1,color:#1e1b4b
-    classDef execution fill:#ecfdf5,stroke:#059669,color:#064e3b
-    class scope,plan,review,feedback,accept decision
-    class explore,build,fix execution
-```
+![Fusion workflow: the main agent plans and reviews; one persistent sidekick explores, implements, and checks the work.](assets/fusion-workflow.svg)
 
 The main agent owns planning, review, and acceptance. The sidekick explores code, implements changes, and runs focused checks.
 They exchange concise briefs and results. Review feedback goes back in one consolidated handoff.
