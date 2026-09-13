@@ -7,7 +7,8 @@ Include a bounded code change, a bug investigation, a broad refactor, and correc
 Record acceptance success, elapsed time, lead and sidekick tokens, handoff count, rework count, and required-check results.
 Use fresh rollouts per trial so whole-rollout token totals match the trial scope.
 Keep cached input separate. Do not add cached input to total input or reasoning output to output again.
-Supply each rollout once to `scripts/token_usage.py`. Missing counters remain unknown, never zero.
+Use `$fusion-usage` for a current or specified session snapshot. Confirm sidekick identities before comparing role totals.
+For explicit file input, supply each rollout once to `scripts/token_usage.py`. Missing counters remain unknown, never zero.
 A decreased cumulative counter makes the report potentially incomplete; resolve that before comparing totals.
 Do not infer dollar cost from mixed-model rollouts or subscription usage from token counts.
 

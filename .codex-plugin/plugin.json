@@ -1,6 +1,6 @@
 {
   "name": "fusion",
-  "version": "0.1.0+codex.20260913053621",
+  "version": "0.1.0+codex.20260913054740",
   "description": "Independent Fusion-style orchestration for Codex: one persistent sidekick, precise briefs, and main-agent review.",
   "author": {
     "name": "Fusion contributors"
@@ -19,7 +19,8 @@
     ],
     "defaultPrompt": [
       "Use $setup-fusion to set up Fusion.",
-      "Use $fusion to implement this task."
+      "Use $fusion to implement this task.",
+      "Use $fusion-usage to analyze this session."
     ]
   },
   "repository": "https://github.com/nahuelb/codex-fusion-plugin",

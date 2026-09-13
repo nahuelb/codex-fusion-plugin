@@ -67,6 +67,24 @@ Hooks require Codex hook trust. Review and enable them through `/hooks` when req
 The workflow still operates as instructions without hooks. Hooks do not bypass approvals or verification gates.
 Ask to stop Fusion to close and release the sidekick and deactivate the current session.
 
+## Session usage
+
+Ask `Use $fusion-usage to analyze this session`, or supply an exact Codex session ID.
+The skill reads local recorded usage and reports lead, confirmed sidekick, and unclassified subagent totals.
+It includes closed or replaced agents when their logs remain available. It does not label every subagent as a sidekick.
+This is an on-demand snapshot, not a background tracker or dollar-cost calculation.
+
+For command-line use from a checkout:
+
+```sh
+python3 scripts/token_usage.py
+python3 scripts/token_usage.py --session <exact-thread-id>
+```
+
+The default uses `CODEX_THREAD_ID`. Supply `--codex-home` for another local log directory.
+Use repeated `--sidekick-id <id>` only for known sidekicks. Explicit rollout paths remain supported below.
+Missing or remote logs remain unavailable; the helper never selects the globally latest session.
+
 ## Included
 
 - Fusion workflow and setup skills, runtime adapter, brief format, and sidekick contract.
