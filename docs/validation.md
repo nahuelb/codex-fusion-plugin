@@ -4,7 +4,7 @@ Date: 2026-09-13.
 
 ## Offline
 
-Twenty-eight unit tests pass. They cover session isolation, registration conflicts, matching release,
+Forty unit tests pass. They cover session isolation, registration conflicts, matching release,
 activation requirements, bounded reminders, unrelated roles, cumulative token accounting,
 missing counters, duplicate rollouts, and decreasing counters.
 The official plugin validator and skill validator pass.

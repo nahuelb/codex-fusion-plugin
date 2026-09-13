@@ -56,7 +56,7 @@ Set `use_current_model` to false to request a delegated lead even from a direct 
 Sidekick model or effort changes apply at the next handoff. The running handoff finishes before agent replacement.
 Unchanged settings reuse the existing agent. New agents receive the accepted-state summary.
 Lead changes apply to the next delegated run. No setting changes an in-flight model call.
-No reinstall is needed for JSON edits. The plugin reads the external file on every dispatch.
+No reinstall is needed for JSON edits. The plugin reads the external file on every preparation or legacy dispatch.
 Invalid JSON blocks new dispatches instead of silently selecting another model.
 Save through an atomic file replacement to avoid a temporary parse error during editing.
 
@@ -98,7 +98,8 @@ Missing or remote logs remain unavailable; the helper never selects the globally
 ```sh
 python3 scripts/model_config.py show
 python3 scripts/fusion.py status
-python3 scripts/fusion.py dispatch
+python3 scripts/fusion.py prepare
+python3 scripts/fusion.py prepare --entry lead
 python3 scripts/token_usage.py --lead /absolute/lead.jsonl --sidekick /absolute/sidekick.jsonl
 python3 -m unittest discover -s tests -v
 ```
@@ -109,6 +110,16 @@ Override with `FUSION_STATE_DIR` on the Codex host so both commands and hooks in
 Setting that variable only inside one tool command does not configure the hook process.
 Commands read `CODEX_THREAD_ID`, or accept `--session <actual-id>` after the subcommand.
 The state registry does not control native agent processes. Close a sidekick before releasing its ID.
+
+## Handoff preparation
+
+`prepare` combines initial lead selection, session activation, and the sidekick decision in one command.
+Use `prepare --entry lead` for an already designated lead, including related follow-ups and delegated runs.
+The response contains only the next action, an agent ID when relevant, and spawn arguments when needed.
+The model file is read once per preparation. Reuse preserves the registered agent; changed sidekick settings request replacement after the running handoff.
+Native Codex tools still spawn, steer, wait, and close. Registration follows successful spawning with the actual ID and settings.
+Supported orchestration surfaces can batch those dependent operations to avoid extra model round trips; the helper itself does not execute them.
+This reduces exposed coordination steps toward Cognition's integrated handoff design, without claiming identical runtime behavior or measured cost savings.
 
 ## Fidelity and limits
 

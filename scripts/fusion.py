@@ -41,6 +41,14 @@ def state(db, session):
             'model': setting[0] if setting else None, 'reasoning_effort': setting[1] if setting else None}
 
 
+def dispatch_result(current, selected):
+    settings = selected['spawn_args']
+    same = current['model'] == settings['model'] and current['reasoning_effort'] == settings['reasoning_effort']
+    selected['action'] = 'spawn' if not current['agent'] else 'reuse' if same else 'replace_after_handoff'
+    selected['agent'] = current['agent']
+    return selected
+
+
 def command(db, args):
     session = args.session or os.environ.get('CODEX_THREAD_ID')
     if not session:
@@ -48,17 +56,28 @@ def command(db, args):
     with db:
         db.execute('BEGIN IMMEDIATE')
         current = state(db, session)
-        if args.action == 'activate':
+        if args.action == 'prepare':
+            loaded = model_config.read()
+            if args.entry == 'current':
+                lead = model_config.resolve_loaded(loaded, 'lead')
+                if lead['action'] == 'spawn':
+                    return {'action': 'delegate_lead', 'spawn_args': lead['spawn_args']}
+            selected = model_config.resolve_loaded(loaded, 'sidekick')
+            db.execute('INSERT INTO sessions VALUES (?, 1, NULL) ON CONFLICT(id) DO UPDATE SET active = 1', (session,))
+            decision = dispatch_result(current, selected)
+            result = {'action': decision['action']}
+            if decision['agent']:
+                result['agent'] = decision['agent']
+            if decision['action'] != 'reuse':
+                result['spawn_args'] = decision['spawn_args']
+            return result
+        elif args.action == 'activate':
             db.execute('INSERT INTO sessions VALUES (?, 1, NULL) ON CONFLICT(id) DO UPDATE SET active = 1', (session,))
         elif args.action == 'dispatch':
             if not current['active']:
                 raise ValueError('Activate this session first.')
             selected = model_config.resolve('sidekick')
-            settings = selected['spawn_args']
-            same = current['model'] == settings['model'] and current['reasoning_effort'] == settings['reasoning_effort']
-            selected['action'] = 'spawn' if not current['agent'] else 'reuse' if same else 'replace_after_handoff'
-            selected['agent'] = current['agent']
-            return selected
+            return dispatch_result(current, selected)
         elif args.action == 'deactivate':
             if current['agent']:
                 raise ValueError('Close the sidekick and release its registration before deactivating.')
@@ -91,7 +110,7 @@ def hook(db, payload):
     event = payload.get('hook_event_name')
     context = None
     if event in ('UserPromptSubmit', 'SessionStart'):
-        context = REMINDER + ' Run fusion.py dispatch before the next handoff to reread the live model file.'
+        context = REMINDER + ' Run fusion.py prepare --entry lead before the next handoff to reread the live model file.'
         agent = state(db, session)['agent']
         if agent:
             context += f' Registered sidekick: {agent}. Check its actual status before reuse.'
@@ -110,7 +129,7 @@ def hook(db, payload):
 def main():
     parser = argparse.ArgumentParser(description='Session-scoped Fusion bookkeeping and advisory hooks.')
     commands = parser.add_subparsers(dest='action', required=True)
-    for name in ('activate', 'deactivate', 'status', 'register', 'release', 'dispatch'):
+    for name in ('activate', 'deactivate', 'status', 'register', 'release', 'dispatch', 'prepare'):
         sub = commands.add_parser(name)
         sub.add_argument('--session')
         if name in ('register', 'release'):
@@ -118,6 +137,8 @@ def main():
         if name == 'register':
             sub.add_argument('--model', required=True)
             sub.add_argument('--reasoning-effort', required=True, choices=sorted(model_config.EFFORTS))
+        if name == 'prepare':
+            sub.add_argument('--entry', choices=['current', 'lead'], default='current')
     commands.add_parser('hook')
     args = parser.parse_args()
     try:

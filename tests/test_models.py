@@ -2,6 +2,7 @@ import argparse
 import json
 import os
 from pathlib import Path
+import subprocess
 import sys
 import tempfile
 import unittest
@@ -27,8 +28,8 @@ class ModelTests(unittest.TestCase):
         self.env.stop()
         self.temp.cleanup()
 
-    def call(self, action, agent=None, model='gpt-5.6-luna', effort='xhigh'):
-        return fusion.command(self.db, argparse.Namespace(action=action, session='test', agent=agent, model=model, reasoning_effort=effort))
+    def call(self, action, agent=None, model='gpt-5.6-luna', effort='xhigh', entry='current', session='test'):
+        return fusion.command(self.db, argparse.Namespace(action=action, session=session, agent=agent, model=model, reasoning_effort=effort, entry=entry))
 
     def change(self, role, key, value):
         data = json.loads(self.path.read_text())
@@ -90,6 +91,145 @@ class ModelTests(unittest.TestCase):
         self.path.unlink()
         with self.assertRaises(ValueError):
             self.call('dispatch')
+
+
+    def test_prepare_inactive_activates_and_returns_spawn(self):
+        result = self.call('prepare', session='fresh')
+        self.assertEqual(result['action'], 'spawn')
+        self.assertIn('spawn_args', result)
+        self.assertNotIn('agent', result)
+        self.assertEqual(result['spawn_args']['model'], 'gpt-5.6-luna')
+        self.assertEqual(result['spawn_args']['reasoning_effort'], 'xhigh')
+        status = self.call('status', session='fresh')
+        self.assertTrue(status['active'])
+        self.assertIsNone(status['agent'])
+        again = self.call('prepare', session='fresh')
+        self.assertEqual(again['action'], 'spawn')
+        self.assertNotIn('agent', again)
+
+    def test_prepare_same_model_returns_exact_reuse(self):
+        self.call('register', agent='one')
+        result = self.call('prepare')
+        self.assertEqual(result, {'action': 'reuse', 'agent': 'one'})
+
+    def test_prepare_model_change_requires_replacement_without_mutating_registration(self):
+        self.call('register', agent='one')
+        self.change('sidekick', 'model', 'gpt-6-astra')
+        result = self.call('prepare')
+        self.assertEqual(result['action'], 'replace_after_handoff')
+        self.assertEqual(result['agent'], 'one')
+        self.assertEqual(result['spawn_args']['model'], 'gpt-6-astra')
+        status = self.call('status')
+        self.assertEqual(status['model'], 'gpt-5.6-luna')
+        self.assertEqual(status['agent'], 'one')
+
+    def test_prepare_effort_change_requires_replacement_without_mutating_registration(self):
+        self.call('register', agent='one')
+        self.change('sidekick', 'reasoning_effort', 'high')
+        result = self.call('prepare')
+        self.assertEqual(result['action'], 'replace_after_handoff')
+        self.assertEqual(result['agent'], 'one')
+        self.assertEqual(result['spawn_args']['reasoning_effort'], 'high')
+        self.assertEqual(self.call('status')['reasoning_effort'], 'xhigh')
+
+    def test_prepare_delegate_lead_without_activation(self):
+        self.change('lead', 'use_current_model', False)
+        result = self.call('prepare', session='lead-fresh')
+        self.assertEqual(result['action'], 'delegate_lead')
+        self.assertEqual(result['spawn_args']['model'], 'gpt-6-astra')
+        self.assertFalse(self.call('status', session='lead-fresh')['active'])
+        lead_result = self.call('prepare', session='lead-fresh', entry='lead')
+        self.assertEqual(lead_result['action'], 'spawn')
+        self.assertIn('spawn_args', lead_result)
+        self.assertTrue(self.call('status', session='lead-fresh')['active'])
+
+    def test_prepare_delegate_lead_preserves_existing_registration(self):
+        self.call('register', agent='one')
+        self.change('lead', 'use_current_model', False)
+        result = self.call('prepare')
+        self.assertEqual(result['action'], 'delegate_lead')
+        status = self.call('status')
+        self.assertEqual(status['agent'], 'one')
+        self.assertEqual(status['model'], 'gpt-5.6-luna')
+
+    def test_prepare_entry_lead_ignores_lead_only_change(self):
+        self.call('register', agent='one')
+        self.change('lead', 'model', 'another/provider-model')
+        self.assertEqual(self.call('prepare', entry='lead'), {'action': 'reuse', 'agent': 'one'})
+        self.assertEqual(self.call('prepare'), {'action': 'reuse', 'agent': 'one'})
+
+    def test_prepare_invalid_config_does_not_activate_or_alter(self):
+        original = self.path.read_text()
+        try:
+            self.path.write_text('{partial')
+            with self.assertRaises(ValueError):
+                self.call('prepare', session='bad-fresh')
+            self.assertFalse(self.call('status', session='bad-fresh')['active'])
+        finally:
+            self.path.write_text(original)
+        self.call('register', agent='one')
+        try:
+            self.path.write_text('{partial')
+            with self.assertRaises(ValueError):
+                self.call('prepare')
+            status = self.call('status')
+            self.assertEqual(status['agent'], 'one')
+            self.assertEqual(status['model'], 'gpt-5.6-luna')
+        finally:
+            self.path.write_text(original)
+
+    def test_prepare_missing_config_does_not_activate_or_alter(self):
+        original = self.path.read_text()
+        self.path.unlink()
+        try:
+            with self.assertRaises(ValueError):
+                self.call('prepare', session='missing-fresh')
+            self.assertFalse(self.call('status', session='missing-fresh')['active'])
+        finally:
+            self.path.write_text(original)
+        self.call('register', agent='one')
+        self.path.unlink()
+        try:
+            with self.assertRaises(ValueError):
+                self.call('prepare')
+            self.assertEqual(self.call('status')['agent'], 'one')
+        finally:
+            self.path.write_text(original)
+
+    def test_prepare_isolated_from_another_session(self):
+        self.call('register', agent='one')
+        other = self.call('prepare', session='other')
+        self.assertEqual(other['action'], 'spawn')
+        self.assertTrue(self.call('status', session='other')['active'])
+        status = self.call('status')
+        self.assertEqual(status['agent'], 'one')
+        self.assertEqual(status['model'], 'gpt-5.6-luna')
+
+    def test_prepare_reads_config_once(self):
+        with patch.object(model_config, 'read', wraps=model_config.read) as mock_read:
+            self.call('prepare', session='once-current')
+            self.assertEqual(mock_read.call_count, 1)
+        with patch.object(model_config, 'read', wraps=model_config.read) as mock_read:
+            self.call('prepare', session='once-lead', entry='lead')
+            self.assertEqual(mock_read.call_count, 1)
+
+    def test_prepare_cli_smoke(self):
+        script = Path(__file__).resolve().parents[1] / 'scripts' / 'fusion.py'
+        env = dict(os.environ)
+        proc = subprocess.run(
+            [sys.executable, str(script), 'prepare', '--session', 'cli-test'],
+            capture_output=True, text=True, env=env, timeout=15,
+        )
+        self.assertEqual(proc.returncode, 0, proc.stderr)
+        output = json.loads(proc.stdout)
+        self.assertEqual(output['action'], 'spawn')
+        self.assertIn('spawn_args', output)
+        self.assertTrue(self.call('status', session='cli-test')['active'])
+        bad = subprocess.run(
+            [sys.executable, str(script), 'prepare', '--session', 'cli-test', '--entry', 'bogus'],
+            capture_output=True, text=True, env=env, timeout=15,
+        )
+        self.assertNotEqual(bad.returncode, 0)
 
 
 class RegistryPathTests(unittest.TestCase):

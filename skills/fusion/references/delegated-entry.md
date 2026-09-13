@@ -1,6 +1,7 @@
 # Delegating a Fusion run
 
-A caller that wants another agent to run Fusion resolves the configured lead before spawning it:
+If `prepare` returned `delegate_lead`, use those returned `spawn_args` without resolving again.
+An external caller that explicitly delegates a Fusion run resolves the configured lead before spawning it:
 
 ```sh
 python3 <plugin-root>/scripts/model_config.py resolve --role lead --context delegated
@@ -15,7 +16,7 @@ Read the supplied Fusion skill and operate its lead/sidekick loop yourself.
 Task: <goal, checkout, scope, accepted facts, required checks, and return contract>.
 ```
 
-The Fusion lead reads the live sidekick settings before each handoff. The caller waits for the integrated result.
+The designated Fusion lead runs `fusion.py prepare --entry lead` in its own thread before each handoff; it must not run initial-entry preparation and select another lead. The caller waits for the integrated result.
 The lead keeps authority within the caller's brief and returns evidence. The caller owns final user communication and broader integration.
 This intentionally adds a caller above the two-agent Fusion pair. It does not permit sidekick nesting.
 The runtime must support the additional delegation depth; if it does not, report the limitation rather than recursively retrying.

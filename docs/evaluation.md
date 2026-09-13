@@ -15,7 +15,7 @@ Do not infer dollar cost from mixed-model rollouts or subscription usage from to
 Runtime acceptance for this plugin:
 
 1. A fresh task discovers the installed fusion skill and reads the live model registry.
-2. Activation creates state only for that main thread.
+2. Preparation reads models once and activates only the designated main thread; delegated-lead selection leaves the caller inactive.
 3. A routine implementation brief spawns one sidekick without copying the full conversation.
 4. A rework brief reuses the same ID and preserves accepted context.
 5. The main agent reviews artifacts and runs remaining required checks.
@@ -34,6 +34,6 @@ Instruction acceptance scenarios (record observed behavior separately from writt
 - Request to create a grader or production query: the lead authors and judges its logic; any sidekick work mechanically applies that exact recipe.
 - Failed check: the sidekick attempts an in-scope repair, reruns affected checks, and reports remaining blockers with evidence.
 - Unrendered UI: report visually unverified rather than treating a build as visual evidence.
-- Unavailable bookkeeping: preserve the actual agent ID and settings in a continuation record, resolve live models directly, and avoid dispatch/register commands until bookkeeping is available.
+- Unavailable bookkeeping: preserve the actual agent ID and settings in a continuation record, resolve live models directly, and avoid prepare/dispatch/register commands until bookkeeping is available.
 
 These are lead-authored evaluation cases, not automated proof of agent behavior.

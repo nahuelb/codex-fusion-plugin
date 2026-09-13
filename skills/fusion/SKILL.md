@@ -11,13 +11,13 @@ This is an independent Codex adaptation of Cognition's Fusion design.
 ## Activate
 
 Read [the runtime contract](references/runtime.md) and [the sidekick contract](references/sidekick.md).
-Apply the runtime's lead-selection rule before activation; an already designated Fusion lead proceeds without spawning another lead.
 Resolve the plugin root as two directories above this skill directory (the directory containing SKILL.md).
-Run `python3 <plugin-root>/scripts/fusion.py activate` in the main thread.
+Run `python3 <plugin-root>/scripts/fusion.py prepare` for initial entry. It resolves the lead, activates only the selected main thread, and prepares the sidekick decision. An already designated Fusion lead uses `prepare --entry lead` instead.
+For `delegate_lead`, follow the runtime's delegated-entry instructions; the caller has not been activated. Otherwise this thread is the Fusion lead.
 The command uses `CODEX_THREAD_ID`; if unavailable, pass the actual thread ID with `--session`. Never invent an ID.
-If state activation fails, report that bookkeeping and hooks are unavailable. Track the agent ID and actual spawn settings in the continuation record; run `python3 <plugin-root>/scripts/model_config.py resolve --role sidekick` before each handoff and apply the same reuse/replacement rules without dispatch or registration commands.
+A missing or invalid model file blocks preparation; use setup or report the error, never choose fallback models. If bookkeeping is unavailable, follow the runtime's explicit fallback. Preparation is not evidence that an agent was spawned.
 Keep Fusion active for follow-up work until the user asks to stop or selects another orchestration workflow.
-To stop, steer active work to a safe stopping point when needed, collect its partial result, then close the sidekick, release its registered ID, and deactivate. Do not wait for unwanted work to finish unchanged. Skip bookkeeping commands when activation failed.
+To stop, steer active work to a safe stopping point when needed, collect its partial result, then close the sidekick, release its registered ID, and deactivate. Do not wait for unwanted work to finish unchanged. Skip bookkeeping commands when bookkeeping is unavailable.
 Do not stack Fusion with another delegation workflow. Preserve project verification and permission requirements.
 
 ## Keep judgment in the main agent
@@ -44,8 +44,8 @@ Once an edit is settled, provide its exact file, location, and fenced code. Do n
 If consequential choices remain unsettled, delegate discovery first. Settle interfaces, data shapes, edge cases, and test cases before implementation. Allow discretion only over minor details within that design; do not ask the sidekick to select an architecture or invent acceptance criteria.
 Specify runnable verification commands and pass conditions. Choose the narrowest checks that establish the change.
 Reserve required broad checks for a final integration gate. Rerun only when changed inputs or new evidence justify it.
-Run `fusion.py dispatch` before each handoff to read the live model registry, using the activation-failure fallback above when needed.
-Spawn with `fork_context: false`; reuse the agent until dispatch requests replacement for changed model settings.
+Use `fusion.py prepare --entry lead` immediately before each later handoff to reread live models. Use the initial preparation for the first handoff if it is still current; prepare again if briefing was delayed or settings changed. Apply the runtime fallback only when bookkeeping is unavailable.
+Spawn with `fork_context: false`; reuse the agent until preparation requests replacement for changed model settings.
 Default to waiting for the result. Work concurrently only when the main agent has independent work.
 Keep only one writer in the shared checkout. Do not edit owned files while the sidekick works.
 

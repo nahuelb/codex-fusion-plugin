@@ -43,12 +43,15 @@ def read():
     return {'path': str(path.resolve()), 'revision': revision, 'models': data}
 
 
-def resolve(role, context='current'):
-    loaded = read()
+def resolve_loaded(loaded, role, context='current'):
     settings = loaded['models'][role]
     inherit = role == 'lead' and context == 'current' and settings['use_current_model']
     args = {} if inherit else {'agent_type': 'default', 'fork_context': False, 'model': settings['model'], 'reasoning_effort': settings['reasoning_effort']}
     return {'path': loaded['path'], 'revision': loaded['revision'], 'role': role, 'action': 'inherit' if inherit else 'spawn', 'spawn_args': args}
+
+
+def resolve(role, context='current'):
+    return resolve_loaded(read(), role, context)
 
 
 def initialize():
