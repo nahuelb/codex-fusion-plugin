@@ -7,10 +7,12 @@ Goal: <one verifiable outcome>
 Workdir: <absolute checkout path>
 Own: <files or bounded area; preserve others' changes>
 Settled inputs: <facts and prior passing checks; do not re-derive>
-Action: <exact file and insertion/replacement location>
+Action: <what changes and why, relevant locations, settled interfaces/data shapes/helpers, hard edge cases, exact test cases/assertions/stubs>
 ```
 
-For a settled edit, include fenced replacement code. For discovery, name the question and evidence required instead.
+Use fenced code when it expresses the settled design most clearly; do not supply every implementation line. Leave bounded implementation details to the sidekick.
+For discovery, name the question and evidence required instead. Review the returned evidence and settle consequential choices before handing off implementation.
+Invite evidence-backed concerns and proposed corrections; retain lead approval of consequential changes.
 
 ```text
 Verify:

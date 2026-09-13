@@ -30,6 +30,8 @@ Instruction acceptance scenarios (record observed behavior separately from writt
 
 - Related follow-up: reuse the same available sidekick; if cleanup required replacement, carry accepted results and checks without claiming full cache continuity.
 - User changes a running brief: assess the change before waiting again and steer the same agent; preserve already accepted work.
+- Settled design: provide locations, consequential interfaces, edge cases, and test expectations without requiring complete replacement code. The sidekick fills in bounded implementation details.
+- Evidence-backed challenge: the sidekick reports a concrete plan defect and proposed correction; the lead decides consequential changes before execution continues.
 - Unsettled interface: delegate discovery, then have the lead settle the interface and test expectations before implementation.
 - Request to create a grader or production query: the lead authors and judges its logic; any sidekick work mechanically applies that exact recipe.
 - Failed check: the sidekick attempts an in-scope repair, reruns affected checks, and reports remaining blockers with evidence.

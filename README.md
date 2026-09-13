@@ -10,6 +10,8 @@ This project is not affiliated with Cognition. It does not include the Devin bin
 
 The main agent owns planning, review, and acceptance. The sidekick explores code, implements changes, and runs focused checks.
 They exchange concise briefs and results. Review feedback goes back in one consolidated handoff.
+Fusion assumes a capable sidekick: briefs describe the settled design, snippets are optional, and initial exploration can support the lead's planning.
+The sidekick can raise evidence-backed concerns; the lead decides consequential changes.
 The main agent verifies the final changes before accepting them; critical analysis stays with the main agent.
 
 ## Install and set up

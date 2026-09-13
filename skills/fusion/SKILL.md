@@ -22,7 +22,8 @@ Do not stack Fusion with another delegation workflow. Preserve project verificat
 
 ## Keep judgment in the main agent
 
-Own requirements, design, ambiguous investigation, acceptance, and user communication.
+Own requirements, design, interpretation of ambiguous evidence, acceptance, and user communication.
+Assume a capable sidekick: delegate initial exploration with a bounded question and evidence request. Inspect the relevant evidence and settle the plan yourself.
 Delegate implementation, focused verification, environment repair, and broad searches whose results can be summarized.
 Inspect enough evidence to settle assumptions before briefing implementation. Use a discovery brief when the implementation is unsettled.
 Treat candidate explanations as hypotheses. Confirm reachability before asserting a root cause.
@@ -40,8 +41,9 @@ Urgent user requests can justify a minimal direct action. Preserve required chec
 ## Brief and dispatch
 
 Use [the brief format](references/brief.md). Include only task-relevant context, never the full conversation.
-Once an edit is settled, provide its exact file, location, and fenced code. Do not make the sidekick re-derive it.
-If consequential choices remain unsettled, delegate discovery first. Settle interfaces, data shapes, edge cases, and test cases before implementation. Allow discretion only over minor details within that design; do not ask the sidekick to select an architecture or invent acceptance criteria.
+Brief at the design level: explain what changes and why, point to relevant locations, and cover hard edge cases. Use snippets when clearest, not for every edit.
+Invite evidence-backed concerns about the plan. Decide consequential corrections yourself before implementation proceeds.
+If consequential choices remain unsettled, delegate discovery first. Settle interfaces, data shapes, edge cases, and test cases before implementation. Leave bounded implementation details to the sidekick within that design; do not ask it to select an architecture or invent acceptance criteria.
 Specify runnable verification commands and pass conditions. Choose the narrowest checks that establish the change.
 Reserve required broad checks for a final integration gate. Rerun only when changed inputs or new evidence justify it.
 Use `fusion.py prepare --entry lead` immediately before each later handoff to reread live models. Use the initial preparation for the first handoff if it is still current; prepare again if briefing was delayed or settings changed. Apply the runtime fallback only when bookkeeping is unavailable.
