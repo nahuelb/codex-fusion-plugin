@@ -3,4 +3,4 @@ interface:
   short_description: "One persistent sidekick with main-agent review"
   default_prompt: "Use $fusion for this task."
 policy:
-  allow_implicit_invocation: false
+  allow_implicit_invocation: true

@@ -1,6 +1,6 @@
 {
   "name": "fusion",
-  "version": "0.1.0+codex.20260913052239",
+  "version": "0.1.0+codex.20260913052559",
   "description": "Independent Fusion-style orchestration for Codex: one persistent sidekick, precise briefs, and main-agent review.",
   "author": {
     "name": "Fusion contributors"
