@@ -1,12 +1,12 @@
 # Fusion
 
-An independent implementation of Cognition's Fusion orchestration pattern as a Codex plugin.
+An independent implementation of [Cognition's Fusion](https://cognition.com/blog/local-fusion) orchestration pattern as a Codex plugin.
 A capable main agent plans and reviews. One persistent sidekick implements bounded briefs and verifies the results.
 This project is not affiliated with Cognition. It does not include the Devin binary or proprietary prompts.
 
 ## How it works
 
-![Fusion workflow: the main agent plans and reviews; one persistent sidekick explores, implements, and checks the work.](assets/fusion-workflow.svg)
+![Fusion workflow: the main agent plans and reviews; one persistent sidekick explores, implements, and checks the work.](image.png)
 
 The main agent owns planning, review, and acceptance. The sidekick explores code, implements changes, and runs focused checks.
 They exchange concise briefs and results. Review feedback goes back in one consolidated handoff.
